@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const { token, logout } = useContext(AuthContext);
+  console.log(token);
+  const isLoggedIn = Boolean(token);
+
   return (
-    <div className="flex justify-between  p-5 tracking-wide decoration-double shadow-md ">
+    <div className="flex justify-between p-5 tracking-wide shadow-md bg-white">
       <Link
         to="/"
-        className="hover:underline text-2xl  font-bold decoration-yellow-500"
+        className="hover:underline text-2xl font-bold decoration-yellow-500"
       >
         AI Blog Generator
       </Link>
-      <div className="decoration-yellow-500 decoration-double text-lg mt-1 flex gap-5">
+
+      <div className="text-lg mt-1 flex gap-5 decoration-yellow-500">
         {!isLoggedIn ? (
           <>
             <Link to="/login" className="hover:underline">
@@ -26,7 +31,13 @@ export default function Navbar() {
             <Link to="/posts" className="hover:underline">
               Your Posts
             </Link>
-            <p className="hover:underline cursor-pointer">Logout</p>
+
+            <button
+              onClick={logout}
+              className="hover:underline cursor-pointer bg-transparent border-none text-left"
+            >
+              Logout
+            </button>
           </>
         )}
       </div>

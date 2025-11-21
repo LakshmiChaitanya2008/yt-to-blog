@@ -6,14 +6,42 @@ import { getPostContent } from "../lib/gemini.js";
 import Post from "../models/Post.js";
 
 const app = Router();
+app.get("/", authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+
+  const user = await User.findById(userId).populate({
+    path: "posts",
+    options: { sort: { createdAt: -1 } },
+  });
+
+  if (!user) {
+    return res.status(404).json({ msg: "User not found" });
+  }
+
+  return res.json({ posts: user.posts });
+});
+
+app.get("/:id", authenticateToken, async (req, res) => {
+  const postId = req.params.id;
+
+  const post = await Post.findOne({
+    _id: postId,
+    user: req.user._id,
+  });
+
+  if (!post) {
+    return res.status(404).json({ msg: "Post not found" });
+  }
+
+  return res.json({ post });
+});
 
 app.post("/create", authenticateToken, async (req, res) => {
   const userId = req.user;
 
   const user = await User.findOne({ _id: userId._id });
 
-  const { ytURL } = req.body;
-
+  const { youtubeUrl: ytURL } = req.body;
   const transcript = await getTranscript(ytURL);
 
   const blogContent = await getPostContent(transcript);
