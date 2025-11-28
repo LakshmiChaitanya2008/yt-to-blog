@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 mongoose
   .connect(
-    "mongodb+srv://admin:lucky.123@cluster0.jlewibz.mongodb.net/?appName=Cluster0"
+    process.env.MONGODB_URL
   )
   .then(() => {
     console.log("Connected to database!");
